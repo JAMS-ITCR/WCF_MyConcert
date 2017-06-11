@@ -56,6 +56,7 @@ namespace WCFServiceWebRole1
                 }
             }          
             return result;
+
         }
         public int logout(string username)
         {
