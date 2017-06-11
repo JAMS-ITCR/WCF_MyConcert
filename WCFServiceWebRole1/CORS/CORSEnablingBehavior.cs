@@ -25,6 +25,7 @@ namespace WCFServiceWebRole1.CORS
         }
 
 
+
         public void Validate(ServiceEndpoint endpoint) { }
 
         public override Type BehaviorType { get { return typeof(CORSEnablingBehavior); } }
