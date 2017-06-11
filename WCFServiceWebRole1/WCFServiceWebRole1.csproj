@@ -99,6 +99,7 @@
     <Content Include="UserService.svc" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CORS\CORSEnablingBehavior.cs" />
     <Compile Include="IUserService.cs" />
     <Compile Include="Service1.svc.cs">
       <DependentUpon>Service1.svc</DependentUpon>
@@ -112,7 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="objResponses\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
