@@ -57,6 +57,7 @@ namespace WCFServiceWebRole1
             }          
             return result;
         }
+
         public int logout(string username)
         {
             SqlConnection con = new SqlConnection(connectionString);
