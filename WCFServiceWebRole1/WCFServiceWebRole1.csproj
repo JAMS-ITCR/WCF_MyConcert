@@ -99,6 +99,7 @@
     <Content Include="UserService.svc" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AUX-OBJ\Result.cs" />
     <Compile Include="CORS\CORSEnablingBehavior.cs" />
     <Compile Include="IUserService.cs" />
     <Compile Include="Service1.svc.cs">
@@ -113,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="PEDS\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
