@@ -6,7 +6,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
-using Newtonsoft.Json;
+using System.Web.Script.Serialization;
 using WCFServiceWebRole1.AUX_OBJ;
 
 namespace WCFServiceWebRole1
@@ -17,12 +17,12 @@ namespace WCFServiceWebRole1
     {
         string country ="test";
         public string connectionString = "Data Source=peds.database.windows.net;Initial Catalog = MyConcert-DB;Integrated Security=False;User ID = Jams2017; Password=Peds2017";
-        public int login(string username, string password)
+        public String login(string username, string password)
         {
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
             int result = -1;
-          
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
             if (con.State == System.Data.ConnectionState.Open)
             {
                 SqlCommand cmd = new SqlCommand("LoginUsuario", con);
@@ -33,38 +33,43 @@ namespace WCFServiceWebRole1
                 SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
                 returnParameter.Direction = ParameterDirection.ReturnValue;
                 cmd.ExecuteNonQuery();
-                 result = (int)returnParameter.Value;
+                result = (int)returnParameter.Value;
                
                 if (result == 103)
                 {
                  
                     Console.Write("Éxito sesión iniciada admin");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Éxito sesión iniciada admin" });
                 }
                 else if (result == 104)
                 {
                     //No existe usuario
                     Console.Write("Éxito inicio sesión fanático");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Éxito inicio sesión fanático" });
                 }
                 else if (result == 105)
                 {
 
                     Console.Write("Usuario Sesión Activa");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Usuario Sesión Activa" });
                 }
                 else if (result == 106)
                 {
 
                     Console.Write("Credenciales incorrectas");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Credenciales incorrectas" });
                 }
             }          
-            return result;
+            return json;
         }
 
         
-        public int logout(string username)
+        public String logout(string username)
         {
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
             int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
             if (con.State == System.Data.ConnectionState.Open)
             {
                 SqlCommand cmd = new SqlCommand("CerrarSesionUsuario", con);
@@ -74,23 +79,29 @@ namespace WCFServiceWebRole1
                 returnParameter.Direction = ParameterDirection.ReturnValue;
                 cmd.ExecuteNonQuery();
                 result = (int) returnParameter.Value;
+               
                 if (result == 100)
                 {
                     Console.Write("Exito cerrando sesión");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Exito cerrando sesión" });
                 }
                 else if (result == 101)
                 {
                     Console.Write("no era necesario cerrar sesión");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "no era necesario cerrar sesión" });
                 }
                 else if (result == 102)
                 {
                     Console.Write("usuario no existe");
-                }
-                else {
-                    Console.Write("Something happened");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "no era necesario cerrar sesión" });
                 }
             }
-            return result;
+                else {
+                    Console.Write("Something happened");
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "no era necesario cerrar sesión" });
+                }
+            
+            return json;
         }
 
         public String createUser (
@@ -112,7 +123,7 @@ namespace WCFServiceWebRole1
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
             int result = -1;
-            String json = JsonConvert.SerializeObject(new Result { id = -1, value = "", info = "Error en la consulta." });
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
             if (con.State == System.Data.ConnectionState.Open)
             {
                SqlCommand cmd = new SqlCommand("Registro", con);
@@ -154,10 +165,10 @@ namespace WCFServiceWebRole1
 
                         description = " No se pudo registrar, por favor verifique sus datos";
                     }
-                    json = JsonConvert.SerializeObject(new Result { id = result, value = "", info = description });                  
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = description });                  
                 }
                 catch (Exception e) {
-                    json = JsonConvert.SerializeObject(new Result { id = -2, value = "", info = "Error en la consulta." });
+                    json = new JavaScriptSerializer().Serialize(new Result { id = -2, value = "", info = "Error en la consulta." });
                 }              
             }
             return json;

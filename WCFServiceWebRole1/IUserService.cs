@@ -21,7 +21,7 @@ namespace WCFServiceWebRole1
            ResponseFormat = WebMessageFormat.Json,
            BodyStyle = WebMessageBodyStyle.Wrapped)]
 
-        int login(string username, string password);
+        String login(string username, string password);
         [OperationContract]
         [WebInvoke(
           Method = "GET",
@@ -30,7 +30,7 @@ namespace WCFServiceWebRole1
           ResponseFormat = WebMessageFormat.Json,
           BodyStyle = WebMessageBodyStyle.Wrapped)]
 
-        int logout(string username);
+        String logout(string username);
 
         [OperationContract]
         [WebInvoke(
@@ -67,7 +67,6 @@ namespace WCFServiceWebRole1
                        string phoneUser,
                        string photoUser,
                        string descriptionUser
-
                        );
     }
    

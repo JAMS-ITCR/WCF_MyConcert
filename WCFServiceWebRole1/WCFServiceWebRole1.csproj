@@ -95,13 +95,31 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CountriesService.svc" />
+    <Content Include="PEDS\BandsService.svc" />
+    <Content Include="PEDS\BillboardServices.svc" />
     <Content Include="Service1.svc" />
     <Content Include="UserService.svc" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AUX-OBJ\BillBoard.cs" />
+    <Compile Include="AUX-OBJ\Country.cs" />
+    <Compile Include="AUX-OBJ\Gender.cs" />
     <Compile Include="AUX-OBJ\Result.cs" />
     <Compile Include="CORS\CORSEnablingBehavior.cs" />
+    <Compile Include="CountriesService.svc.cs">
+      <DependentUpon>CountriesService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="PEDS\BandsService.svc.cs">
+      <DependentUpon>BandsService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="PEDS\BillboardServices.svc.cs">
+      <DependentUpon>BillboardServices.svc</DependentUpon>
+    </Compile>
+    <Compile Include="ICountriesService.cs" />
     <Compile Include="IUserService.cs" />
+    <Compile Include="PEDS\IBandsService.cs" />
+    <Compile Include="PEDS\IBillboardServices.cs" />
     <Compile Include="Service1.svc.cs">
       <DependentUpon>Service1.svc</DependentUpon>
     </Compile>
@@ -114,13 +132,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="PEDS\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

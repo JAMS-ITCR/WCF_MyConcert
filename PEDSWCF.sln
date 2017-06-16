@@ -7,6 +7,11 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "PEDSWCF", "PEDSWCF\PEDSWCF.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCFServiceWebRole1", "WCFServiceWebRole1\WCFServiceWebRole1.csproj", "{D59B6C5D-BECA-4495-946A-648FC7BC3B93}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{943BECCC-6B4A-4A43-9785-2FA49B497E2C}"
+	ProjectSection(SolutionItems) = preProject
+		WE-Palette.css = WE-Palette.css
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
