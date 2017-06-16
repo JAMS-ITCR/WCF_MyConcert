@@ -520,7 +520,86 @@ namespace WCFServiceWebRole1.PEDS
             return json;
         }
 
+        public String getRatingBanda(string idbanda) {
+            /*execute getRatingBanda  @IdBanda = 1*/
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            int result = -1;
+            
+            String json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "-1", info = "Error en la consulta." });
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                SqlCommand cmd = new SqlCommand("getRatingBanda", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@IdBanda", SqlDbType.Int).Value = Int32.Parse(idbanda.ToString());
 
+                SqlDataReader reader = cmd.ExecuteReader();
+                
+                try
+                {
+                    reader.Read();           
+                    String rating = reader["Rating"].ToString();
+
+                    if (result == 101)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "-1", info = "Banda No Existe" });
+                    }
+                    else {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value =rating, info = "Rating" });
+                    }                  
+                }
+                catch (Exception e)
+                {
+                    json = new JavaScriptSerializer().Serialize(new Result { id = result, value = e.ToString(), info = "Error en la consulta." });
+                }
+            }
+            //return json;
+            return json;
+            
+        }
+
+        public String getAccumulated(string idbanda){
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            int result = -1;
+
+            String json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "-1", info = "Error en la consulta." });
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("getAcumuladoBanda", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@IdBanda", SqlDbType.Int).Value = Int32.Parse(idbanda.ToString());
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    try
+                    {
+                        reader.Read();
+                        String accumulated = reader["Acumulado"].ToString();
+                        return new JavaScriptSerializer().Serialize(new Result { id = result, value = accumulated, info = "Exito" });
+                    }
+                    catch (Exception e)
+                    {
+                        return new JavaScriptSerializer().Serialize(new Result { id = result, value = e.ToString(), info = "Error en la consulta. [2]" });
+                    }
+
+                }
+                catch (Exception e) {
+                    return new JavaScriptSerializer().Serialize(new Result { id = result, value = e.ToString(), info = "Error en la consulta. [1]" });
+                }
+            }
+            
+            return json;
+        }
+
+        public String addComment(string idusuario, string idbanda, string rating, string content) {
+            return "ok";
+        }
+
+        public String getComment(string idbanda) {
+            return "ok"; 
+        }
     }
 
 

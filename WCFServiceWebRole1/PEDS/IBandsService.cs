@@ -122,6 +122,23 @@ namespace WCFServiceWebRole1.PEDS
         BodyStyle = WebMessageBodyStyle.Wrapped)]
         String deleteSongToBand(string idbanda, string idcancion);
 
+        [OperationContract]
+        [WebInvoke(
+         Method = "GET",
+         UriTemplate = "/rating?idbanda={idbanda}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getRatingBanda(string idbanda);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "GET",
+         UriTemplate = "/accumulated?idbanda={idbanda}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getAccumulated(string idbanda);
 
     }
 
