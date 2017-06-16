@@ -29,6 +29,100 @@ namespace WCFServiceWebRole1.PEDS
          ResponseFormat = WebMessageFormat.Json,
          BodyStyle = WebMessageBodyStyle.Wrapped)]
         String createBand(string nbanda, string idgenero, string description);
-        
+
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "PUT",
+         UriTemplate = "/band?idbanda ={idbanda}&descripcion={descripcion}&estado={estado}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String updateBand(string idbanda, string descripcion, string estado);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "GET",
+         UriTemplate = "/bands",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getBands();
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "GET",
+         UriTemplate = "/bands/{bandid}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getBand(String bandid);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "POST",
+         UriTemplate = "/bandmember?nmiembro={nmiembro}&idbanda={idbanda}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String addMemberToBanda(string nmiembro, string idbanda);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "DELETE",
+         UriTemplate = "/bandmember?idmiembro={idmiembro}&idbanda={idbanda}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String deleteBandMember(string idbanda, string idmiembro);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "GET",
+         UriTemplate = "/bandmembers?idbanda={idbanda}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getMembersByBand(string idbanda);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "POST",
+         UriTemplate = "/imageband?idbanda={idbanda}&urlimagen={urlimagen}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String addImageToBand(string idbanda, string urlimagen);
+
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "DELETE",
+         UriTemplate = "/imageband?idbanda={idbanda}&idimagen={idimagen}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String deleteImageFrom(string idbanda, string idimagen);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "POST",
+         UriTemplate = "/songband?ncancion={ncancion}&preview={preview}&image={image}&idbanda={idbanda}&idalbum={idalbum}&estado={estado}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String addSongToBand(string ncancion, string preview, string image, string idbanda, string idalbum, string estado);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "DELETE",
+        UriTemplate = "/songband?idbanda={idbanda}&idcancion={idcancion}",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String deleteSongToBand(string idbanda, string idcancion);
+
+
     }
+
 }

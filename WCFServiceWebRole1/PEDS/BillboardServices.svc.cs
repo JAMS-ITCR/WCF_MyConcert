@@ -247,5 +247,51 @@ namespace WCFServiceWebRole1.PEDS
             return json;
             
         }
+
+        public String getFestivals() {
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Error en la consulta." });
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                SqlDataReader reader = null;
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("getFestivales", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    reader = cmd.ExecuteReader();
+
+                }
+
+                catch (Exception e)
+                {
+                    return new JavaScriptSerializer().Serialize(new Result { id = -11, value = "", info = "Error en la consulta CMD." });
+                }
+                List<Festival> billboards = new List<Festival>();
+                while (reader.Read())
+
+                {
+                    Festival festival = new Festival();
+                    festival.IdFestival = Int32.Parse(reader["IdFestival"].ToString());
+                    festival.Nombre = reader["Nombre"].ToString();
+                    festival.IdPais = Int32.Parse(reader["IdPais"].ToString());
+
+                    festival.Lugar = reader["Lugar"].ToString();
+                    festival.FechaInicio = reader["FechaInicio"].ToString();
+                    festival.FechaFinal = reader["FechaFinal"].ToString();
+                    festival.Transporte = reader["Transporte"].ToString();
+                    festival.Comida = reader["Comida"].ToString();
+                    festival.Servicios = reader["Servicios"].ToString();
+                    festival.IdCartelera = Int32.Parse(reader["IdCartelera"].ToString());
+                    festival.IdBanda = Int32.Parse(reader["IdBanda"].ToString());                    
+                    festival.Estado = (bool)reader["Estado"];
+
+                    billboards.Add(festival);
+                }
+                json = new JavaScriptSerializer().Serialize(billboards);
+            }
+            return json;
+        }
     }
 }

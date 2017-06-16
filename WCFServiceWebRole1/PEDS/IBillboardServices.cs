@@ -77,5 +77,14 @@ namespace WCFServiceWebRole1.PEDS
        ResponseFormat = WebMessageFormat.Json,
        BodyStyle = WebMessageBodyStyle.Wrapped)]
         String getBillBoard();
+
+        [OperationContract]
+        [WebInvoke(
+      Method = "GET",
+      UriTemplate = "/festivals",
+      RequestFormat = WebMessageFormat.Json,
+      ResponseFormat = WebMessageFormat.Json,
+      BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getFestivals();
     }
 }

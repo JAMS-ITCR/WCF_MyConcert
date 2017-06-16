@@ -102,8 +102,11 @@
     <Content Include="UserService.svc" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AUX-OBJ\Band.cs" />
+    <Compile Include="AUX-OBJ\BandMember.cs" />
     <Compile Include="AUX-OBJ\BillBoard.cs" />
     <Compile Include="AUX-OBJ\Country.cs" />
+    <Compile Include="AUX-OBJ\Festival.cs" />
     <Compile Include="AUX-OBJ\Gender.cs" />
     <Compile Include="AUX-OBJ\Result.cs" />
     <Compile Include="CORS\CORSEnablingBehavior.cs" />
