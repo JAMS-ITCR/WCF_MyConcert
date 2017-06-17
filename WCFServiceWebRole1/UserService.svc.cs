@@ -409,7 +409,6 @@ namespace WCFServiceWebRole1
                 json = new JavaScriptSerializer().Serialize(genders);
             }
             //return json;
-
             return new JavaScriptSerializer().Serialize(new Result { id = 1, value = json, info = "Lista de Miembros" });
         }
 
