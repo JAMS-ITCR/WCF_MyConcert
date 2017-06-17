@@ -232,8 +232,9 @@ namespace WCFServiceWebRole1.PEDS
                     billboard.Nombre = reader["Nombre"].ToString();
                     billboard.IdPais = Int32.Parse(reader["IdPais"].ToString());
                     billboard.Lugar = reader["Lugar"].ToString();
-
+                    billboard.NombrePais = reader["NombrePais"].ToString();
                     billboard.FechaInicio = reader["FechaInicio"].ToString();
+                    billboard.CierreVotacion = reader["CierreVotacion"].ToString();
                     billboard.FechaFinal = reader["FechaFinal"].ToString();
                     billboard.Estado = (bool)reader["Estado"];
                     
@@ -269,29 +270,331 @@ namespace WCFServiceWebRole1.PEDS
                     return new JavaScriptSerializer().Serialize(new Result { id = -11, value = "", info = "Error en la consulta CMD." });
                 }
                 List<Festival> billboards = new List<Festival>();
-                while (reader.Read())
-
+                try
                 {
-                    Festival festival = new Festival();
-                    festival.IdFestival = Int32.Parse(reader["IdFestival"].ToString());
-                    festival.Nombre = reader["Nombre"].ToString();
-                    festival.IdPais = Int32.Parse(reader["IdPais"].ToString());
 
-                    festival.Lugar = reader["Lugar"].ToString();
-                    festival.FechaInicio = reader["FechaInicio"].ToString();
-                    festival.FechaFinal = reader["FechaFinal"].ToString();
-                    festival.Transporte = reader["Transporte"].ToString();
-                    festival.Comida = reader["Comida"].ToString();
-                    festival.Servicios = reader["Servicios"].ToString();
-                    festival.IdCartelera = Int32.Parse(reader["IdCartelera"].ToString());
-                    festival.IdBanda = Int32.Parse(reader["IdBanda"].ToString());                    
-                    festival.Estado = (bool)reader["Estado"];
 
-                    billboards.Add(festival);
+                    while (reader.Read())
+
+                    {
+                        Festival festival = new Festival();
+                        festival.IdFestival = Int32.Parse(reader["IdFestival"].ToString());
+                        festival.Nombre = reader["Nombre"].ToString();
+                        festival.IdPais = Int32.Parse(reader["IdPais"].ToString());
+
+                        festival.Lugar = reader["Lugar"].ToString();
+                        festival.FechaInicio = reader["FechaInicio"].ToString();
+                        festival.FechaFinal = reader["FechaFinal"].ToString();
+                        festival.Transporte = reader["Transporte"].ToString();
+                        festival.Comida = reader["Comida"].ToString();
+                        festival.Servicios = reader["Servicios"].ToString();
+                        festival.IdCartelera = Int32.Parse(reader["IdCartelera"].ToString());
+                        festival.IdBanda = Int32.Parse(reader["IdBanda"].ToString());
+                        festival.Estado = (bool)reader["Estado"];
+
+                        billboards.Add(festival);
+                    }
+                    json = new JavaScriptSerializer().Serialize(billboards);
                 }
-                json = new JavaScriptSerializer().Serialize(billboards);
+                catch (Exception e) {
+                    return new JavaScriptSerializer().Serialize(new Result { id = -12, value = e.ToString(), info = "Error en la consulta CMD." });
+                }
             }
             return json;
         }
+
+       
+        public String crearFestival( string transporte, string comida, string servicios, string idcartelera, string idbanda, string estado)
+        {
+            /*
+             * execute crearFestival @NFestival = 'NombreFest', @Transporte = 'Info', @Comida = 'Info', @Servicios = 'Info', @IdCartelera = 1, @IdBanda int = 8, @Estado = 0
+             * @Transporte varchar(500),
+                @Comida varchar(500),
+                @Servicios varchar(500),
+                @IdCartelera int,
+                @IdBanda int,
+                @Estado bit
+             */
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
+            try
+            {
+
+                SqlConnection con = new SqlConnection(connectionString);
+                con.Open();
+                
+                int result = -3;
+                if (con.State == System.Data.ConnectionState.Open)
+                {
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand("crearFestival", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+
+                        cmd.Parameters.Add("@Transporte", SqlDbType.VarChar).Value = transporte.ToString();
+                        cmd.Parameters.Add("@Comida", SqlDbType.VarChar).Value = comida.ToString();
+                        cmd.Parameters.Add("@Servicios", SqlDbType.VarChar).Value = servicios.ToString();
+                        cmd.Parameters.Add("@IdCartelera", SqlDbType.Int).Value = Int32.Parse(idcartelera.ToString());
+                        cmd.Parameters.Add("@IdBanda", SqlDbType.Int).Value = Int32.Parse(idbanda.ToString());
+                        cmd.Parameters.Add("@Estado", SqlDbType.Int).Value = Int32.Parse(estado.ToString());
+
+                        SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                        returnParameter.Direction = ParameterDirection.ReturnValue;
+                        cmd.ExecuteNonQuery();
+                        result = (int)returnParameter.Value;
+                        /*
+                         * 100: Creacion Exitosa del festival
+                        101: No se pudo crear el Festival, ya el nombre fue usado, no existe la recomendacion del chef, etc.
+                        102: Las votaciones no han terminado
+                        103: La cartelera ya ha sido usada para un festival
+                        104: La cartelera no existe
+                                             */
+                        if (result == 100)
+                        {
+                            json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " Creacion Exitosa del festival" });
+                        }
+                        else if (result == 101)
+                        {
+                            json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "  No se pudo crear el Festival, ya el nombre fue usado, no existe la recomendacion del chef, etc." });
+                        }
+                        else if (result == 102)
+                        {
+                            json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Las votaciones no han terminado" });
+                        }
+                        else if (result == 103)
+                        {
+                            json = new JavaScriptSerializer().Serialize(new Result { id = -7, value = "", info = "La cartelera ya ha sido usada para un festival" });
+                        }
+                        else
+                        {
+                            json = new JavaScriptSerializer().Serialize(new Result { id = -7, value = "", info = "La cartelera no existe" });
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        return new JavaScriptSerializer().Serialize(new Result { id = -8, value = e.ToString(), info = "ERROR: Resultado desconocido" });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return new JavaScriptSerializer().Serialize(new Result { id = -8, value = e.ToString(), info = "ERROR: Resultado desconocido [1]" });
+            }
+            return json;
+        }
+
+        public String getPreInfoFestival(string IdCartelera) {
+            /*getPreInfoFestival @IdCartelera = 1*/
+            /*101: No se pudo obtener la informacion
+            102: Las votaciones no han terminado
+            103: La Cartelera está inactiva
+            104: La cartelera no existe*/
+
+            return "ok";
+        }
+
+        public String asignarBandaCategoriaFestival(string IdCategoria) {
+            /* asignarBandaCategoriaFestival @IdCategoria = 2*/
+            return "ok";
+        }
+
+        public String getBandasCategoriasFestival(string IdFestival) {
+            return "ok";
+        }
+
+        public String eliminarBandaFestival(string idfestival, string idbanda)
+        {
+            /*execute eliminarBandaFestival @IdFestival = 1, @IdBanda = 3*/
+            SqlConnection con;
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
+            try
+            {
+                con = new SqlConnection(connectionString);
+                con.Open();
+                if (con.State == System.Data.ConnectionState.Open)
+                {
+                    /*
+                     * @IdFestival int,
+                       @IdBanda int
+                     */
+                    SqlCommand cmd = new SqlCommand("eliminarBandaFestival", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@IdFestival", SqlDbType.Int).Value = Int32.Parse(idfestival);
+                    cmd.Parameters.Add("@IdBanda", SqlDbType.Int).Value = Int32.Parse(idbanda);
+               
+
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.ExecuteNonQuery();
+                    result = (int)returnParameter.Value;
+                    /*
+                     100: Eliminacion exitosa
+                    101: No se pudo eliminar
+                    102: La Banda  debe tener al menos 1 Banda
+                    103: La Banda no ha sido asignada a este festival
+                    104: La Banda no existe
+                    105: Festival no existe*/
+
+                    if (result == 100)
+                    {
+                    
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Eliminacion exitosa" });
+                    }
+                    else if (result == 101)
+                    {
+                    
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " No se pudo eliminar" });
+                    }
+                    else if (result == 102)
+                    {
+                    
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "La Banda  debe tener al menos 1 Banda" });
+                    }
+                    else if (result == 103)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "La Banda no ha sido asignada a este festival" });
+                    }
+                    else if (result == 104)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "La Banda no existe" });
+                    }
+                    else if (result == 105)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " Festival no existe" });
+                    }
+                    else
+                    {
+                        Console.Write("Categoria no existe");
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Categoria no existe" });
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                return new JavaScriptSerializer().Serialize(new Result { id = result, value =e.ToString(), info = "Categoria no existe" });
+
+            }
+            return json;
+        }
+
+        public String desactivarCartelera(string idcartelera) {
+            /*execute  desactivarCartelera @IdCartelera = 1*/
+            SqlConnection con;
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
+            try
+            {
+                con = new SqlConnection(connectionString);
+                con.Open();
+                if (con.State == System.Data.ConnectionState.Open)
+                {
+                    /*
+                     * @IdCartelera int
+                     */
+                    SqlCommand cmd = new SqlCommand("desactivarCartelera", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@IdCartelera", SqlDbType.Int).Value = Int32.Parse(idcartelera);
+                    
+
+
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.ExecuteNonQuery();
+                    result = (int)returnParameter.Value;
+                    /*
+                    100: Desactivación exitosa
+                    101: No se pudo desactivar
+                    102: Cartelera no existe
+                     */
+
+                    if (result == 100)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Desactivación exitosa" });
+                    }
+                    else if (result == 101)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " No se pudo desactivar" });
+                    }
+                    else if (result == 102)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " Cartelera no existe" });
+                    }
+                    else
+                    {
+                        Console.Write("Categoria no existe");
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Resultado desconocido" });
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                return new JavaScriptSerializer().Serialize(new Result { id = result, value = e.ToString(), info = "Resultado Desconocido [2]" });
+
+            }
+            return json;
+        }
+        public String updateEstadoFestival(string idfestival, string estado) {
+            /*execute updateEstadoFestival @IdFestival = 1, @Estado = 1*/
+            SqlConnection con;
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
+            try
+            {
+                con = new SqlConnection(connectionString);
+                con.Open();
+                if (con.State == System.Data.ConnectionState.Open)
+                {
+                    /*
+                     *@IdFestival int,
+                     *@Estado int
+                     */
+                    SqlCommand cmd = new SqlCommand("updateEstadoFestival", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@IdFestival", SqlDbType.Int).Value = Int32.Parse(idfestival);
+                    cmd.Parameters.Add("@Estado", SqlDbType.Int).Value = Int32.Parse(estado);
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.ExecuteNonQuery();
+                    result = (int)returnParameter.Value;
+                    if (result == 100)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Actualizado correctamente" });
+                    }
+                    else if (result == 101)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "No se pudo actualizar" });
+                    }
+                    else if (result == 102)
+                    {
+
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "  Festival no existe" });
+                    }
+                    else
+                    {
+                        Console.Write("Categoria no existe");
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Resultado desconocido" });
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                return new JavaScriptSerializer().Serialize(new Result { id = result, value = e.ToString(), info = "Resultado Desconocido [2]" });
+
+            }
+            return json;
+        }
+
     }
 }

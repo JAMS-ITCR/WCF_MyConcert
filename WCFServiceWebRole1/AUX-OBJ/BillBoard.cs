@@ -15,6 +15,7 @@ namespace WCFServiceWebRole1.AUX_OBJ
         public bool Estado { get; set; }
         public String FechaInicio { get; set; }
         public String FechaFinal { get; set; }
+        public String NombrePais { get; set; }
 
     }
 }

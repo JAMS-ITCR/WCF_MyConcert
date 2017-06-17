@@ -68,6 +68,43 @@ namespace WCFServiceWebRole1
                        string photoUser,
                        string descriptionUser
                        );
+
+        [OperationContract]
+        [WebInvoke(
+          Method = "GET",
+          UriTemplate = "/user?idusuario={idusuario}&idrol={idrol}",
+          RequestFormat = WebMessageFormat.Json,
+          ResponseFormat = WebMessageFormat.Json,
+          BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getInfoUsuario(string idusuario, string idrol);
+
+        [OperationContract]
+        [WebInvoke(
+          Method = "GET",
+          UriTemplate = "/fan?idusuario={idusuario}",
+          RequestFormat = WebMessageFormat.Json,
+          ResponseFormat = WebMessageFormat.Json,
+          BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getDetalleFanatico(string idusuario);
+
+        [OperationContract]
+        [WebInvoke(
+          Method = "POST",
+          UriTemplate = "/fan/gender?idusuario={idusuario}&idgenero={idgenero}",
+          RequestFormat = WebMessageFormat.Json,
+          ResponseFormat = WebMessageFormat.Json,
+          BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String asignarGeneroFanatico(string idusuario, string idgenero);
+
+        [OperationContract]
+        [WebInvoke(
+          Method = "DELETE",
+          UriTemplate = "/fan/gender?idusuario={idusuario}&idgenero={idgenero}",
+          RequestFormat = WebMessageFormat.Json,
+          ResponseFormat = WebMessageFormat.Json,
+          BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String eliminarGeneroFanatico(string idusuario, string idgenero);
+
     }
    
 }

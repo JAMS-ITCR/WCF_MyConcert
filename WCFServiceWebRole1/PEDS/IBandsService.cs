@@ -23,6 +23,24 @@ namespace WCFServiceWebRole1.PEDS
 
         [OperationContract]
         [WebInvoke(
+         Method = "GET",
+         UriTemplate = "/genders/fan?idusuario={idusuario}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getGendersByFan(string idusuario);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "GET",
+         UriTemplate = "/genders?idgenero={idgenero}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String  getGeneroById(string idgenero);
+
+        [OperationContract]
+        [WebInvoke(
          Method = "POST",
          UriTemplate = "/band?nbanda={nbanda}&idgenero={idgenero}&description={description}",
          RequestFormat = WebMessageFormat.Json,
@@ -139,6 +157,45 @@ namespace WCFServiceWebRole1.PEDS
          ResponseFormat = WebMessageFormat.Json,
          BodyStyle = WebMessageBodyStyle.Wrapped)]
         String getAccumulated(string idbanda);
+
+        [OperationContract]
+        [WebInvoke(
+         Method = "POST",
+         UriTemplate = "/comment?idusuario={idusuario}&idbanda={idbanda}&rating={rating}&content={content}",
+         RequestFormat = WebMessageFormat.Json,
+         ResponseFormat = WebMessageFormat.Json,
+         BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String addComment(string idusuario, string idbanda, string rating, string content);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "GET",
+        UriTemplate = "/comments?idbanda={idbanda}",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String  getComments(string idbanda);
+
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "GET",
+        UriTemplate = "/bandsbillboards?idcartelera={idcartelera}",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String getBandasXCategoriaXCartelera(string idcartelera);
+
+        [OperationContract]
+        [WebInvoke(
+        Method = "POST",
+        UriTemplate = "/vote?data={data}",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Wrapped)]
+        String makeVote(string data);
+
+       
 
     }
 

@@ -37,6 +37,60 @@ namespace WCFServiceWebRole1.PEDS
             }
             return json;
         }
+
+        public String getGendersByFan(string idusuario )
+        {
+            /*execute getGenerosFanatico @IdUsuario = 2*/
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Error en la consulta." });
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                SqlCommand cmd = new SqlCommand("getGenerosFanatico", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@IdUsuario", SqlDbType.Int).Value = Int32.Parse(idusuario);
+                SqlDataReader reader = cmd.ExecuteReader();
+                List<Gender> genders = new List<Gender>();
+                while (reader.Read())
+                {
+                    Gender gender = new Gender();
+                    gender.IdGenero = Int32.Parse(reader["IdGenero"].ToString());
+                    gender.Nombre = reader["Nombre"].ToString();
+                    genders.Add(gender);
+                }
+                json = new JavaScriptSerializer().Serialize(genders);
+            }
+            return json;
+        }
+
+        public String getGeneroById(string idgenero)
+        {
+            /*execute getGeneroById @IdGenero = 1*/
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Error en la consulta." });
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                SqlCommand cmd = new SqlCommand("getGeneroById", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@IdGenero", SqlDbType.Int).Value = Int32.Parse(idgenero);
+                SqlDataReader reader = cmd.ExecuteReader();
+                List<Gender> genders = new List<Gender>();
+                while (reader.Read())
+                {
+                    Gender gender = new Gender();
+                    gender.IdGenero = Int32.Parse(reader["IdGenero"].ToString());
+                    gender.Nombre = reader["Nombre"].ToString();
+                    genders.Add(gender);
+                }
+                json = new JavaScriptSerializer().Serialize(genders);
+            }
+            return json;
+        }
+
+
         public String createBand(string nbanda, string idgenero, string description)
         {
             SqlConnection con = new SqlConnection(connectionString);
@@ -52,7 +106,7 @@ namespace WCFServiceWebRole1.PEDS
                     cmd.Parameters.Add("@IdGenero", SqlDbType.Int).Value = Int32.Parse(idgenero);
                     cmd.Parameters.Add("@Descripcion", SqlDbType.VarChar).Value = description;
                     /*excecute crearBanda @NBanda = 'Metallica', @IdGenero = 1,@Descripcion = 'Alguna descripcion'*/
-                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+            SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
                     returnParameter.Direction = ParameterDirection.ReturnValue;
                     cmd.ExecuteNonQuery();
                     result = (int)returnParameter.Value;
@@ -594,12 +648,213 @@ namespace WCFServiceWebRole1.PEDS
         }
 
         public String addComment(string idusuario, string idbanda, string rating, string content) {
-            return "ok";
+            /*execute crearComentario @IdUsuario = 1, @IdBanda = 1, @Rating = 4, @Contenido = 'Algun comentario'*/
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
+            int result = -3;
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("crearComentario", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@IdUsuario", SqlDbType.Int).Value = Int32.Parse(idusuario.ToString());
+                    cmd.Parameters.Add("@IdBanda", SqlDbType.Int).Value = Int32.Parse(idbanda.ToString());
+                    cmd.Parameters.Add("@Rating", SqlDbType.Int).Value = Int32.Parse(rating.ToString());
+                    cmd.Parameters.Add("@Contenido", SqlDbType.VarChar).Value = content.ToString();
+
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.ExecuteNonQuery();
+                    result = (int)returnParameter.Value;
+
+                    if (result == 100)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Comentario añadido exitosamente" });
+                    }
+                    else if (result == 101)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Error al insertar comentario (El usuario ya había calificado la banda, etc)" });
+                    }
+                    else if (result == 102)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "102: Banda no existe" });
+                    }
+                    else if (result == 103)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Usuario no existe" });
+                    }
+
+                    else if (result == 104)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = -7, value = "", info = " Rating debe ser entre 0 y 5" });
+                    }
+
+                    else if (result == 105)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = -7, value = "", info = " Solo fanáticos pueden votar" });
+                    }
+                    else {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = -7, value = "", info = " Desconocido" });
+                    }
+                }
+                catch (Exception e)
+                {
+                    return new JavaScriptSerializer().Serialize(new Result { id = -8, value = e.ToString(), info = "ERROR: Resultado desconocido" });
+                }
+            }
+            return json;
+            
         }
 
-        public String getComment(string idbanda) {
-            return "ok"; 
+        public String getComments(string idbanda) {
+            /**execute getComentariosBanda @IdBanda = 1*/
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Error en la consulta." });
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                SqlCommand cmd = new SqlCommand("getComentariosBanda", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@IdBanda", SqlDbType.Int).Value = Int32.Parse(idbanda.ToString());
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                List<Comment> comments = new List<Comment>();
+                try
+                {
+                    while (reader.Read())
+                    {
+                        /*Comentario.IdComentario: int
+                        Comentario.IdUsuario: int
+                        Comentario.IdBanda: int
+                        Comentario.Rating: int
+                        Comentario.Contenido: varchar
+                        Comentario.FechaCreación: datetime
+                        Comentario.Estado: bit*/
+                        Comment comment = new Comment();
+                        
+                        comment.IdComentario = Int32.Parse(reader["IdComentario"].ToString());
+                        comment.IdUsuario = Int32.Parse(reader["IdUsuario"].ToString());
+                        comment.IdBanda = Int32.Parse(reader["IdBanda"].ToString());
+                        comment.Rating = Int32.Parse(reader["Rating"].ToString());
+                        comment.Contenido =reader["Contenido"].ToString();
+                        comment.FechaCreacion = reader["FechaCreacion"].ToString();
+                        comment.Estado = (bool)reader["Estado"];
+                        comments.Add(comment);
+                    }
+                }
+                catch (Exception e)
+                {
+                    return new JavaScriptSerializer().Serialize(new Result { id = -2, value = e.ToString(), info = "Error en la consulta." });
+                }
+
+
+                json = new JavaScriptSerializer().Serialize(comments);
+            }
+            //return json;
+            return new JavaScriptSerializer().Serialize(new Result { id = 1, value = json, info = "Lista de Comentarios" });
         }
+
+        public String getBandasXCategoriaXCartelera(string idcartelera) {
+            /*
+             Cartelera.IdCartelera: int
+            Categoria.IdCategoria: int
+            Categoria.Nombre: varchar
+            Banda.IdBanda: int
+            Banda.Nombre: varchar*/
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            int result = -1;
+            String json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = "Error en la consulta." });
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("getBandasXCategoriaXCartelera", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@IdCartelera", SqlDbType.Int).Value = Int32.Parse(idcartelera.ToString());
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<BandBillborad> bands = new List<BandBillborad>();
+                    while (reader.Read())
+                    {
+                        BandBillborad band = new BandBillborad();
+
+                        band.IdCartelera = Int32.Parse(reader["IdCartelera"].ToString());
+                        band.IdCategoria = Int32.Parse(reader["IdCategoria"].ToString());
+                        band.IdBanda = Int32.Parse(reader["IdBanda"].ToString());
+
+                        band.CategoriaNombre = reader["NombreCategoria"].ToString();
+                        band.BandaNombre = reader["BandaNombre"].ToString();
+
+
+
+                        bands.Add(band);
+                    }
+                    json = new JavaScriptSerializer().Serialize(bands);
+                }
+                catch (Exception e) {
+                   return  new JavaScriptSerializer().Serialize(new Result { id = result, value = e.ToString(), info = "Error en la consulta." });
+                }
+
+                
+            }
+            return json;
+        }
+
+        public String makeVote(string data) {
+            /*exec HacerVotacion @data = '
+             * 
+             * 
+             * '*/
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+            String json = new JavaScriptSerializer().Serialize(new Result { id = -1, value = "", info = "Error en la consulta." });
+            int result = -3;
+            if (con.State == System.Data.ConnectionState.Open)
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("HacerVotacion", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@data", SqlDbType.VarChar).Value = data.ToString();
+                   
+                    SqlParameter returnParameter = cmd.Parameters.Add("RetVal", SqlDbType.Int);
+                    returnParameter.Direction = ParameterDirection.ReturnValue;
+                    cmd.ExecuteNonQuery();
+                    result = (int)returnParameter.Value;
+                    if (result == 100)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " Insersión Exitosa" });
+                    }
+                    else if (result == 101)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " Json vacío" });
+                    }
+                    else if (result == 102)
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = result, value = "", info = " No se pudo insertar la información (Json inválido, usuario quiere votar dos veces rompiendo la constraint unique)" });
+                    }
+                    else
+                    {
+                        json = new JavaScriptSerializer().Serialize(new Result { id = -7, value = "", info = " Error desconocido" });
+                    }
+                }
+                catch (Exception e)
+                {
+                    return new JavaScriptSerializer().Serialize(new Result { id = -8, value = e.ToString(), info = "ERROR: Resultado desconocido" });
+                }
+            }
+            return json;
+           
+        }
+
+        
+
+
     }
 
 
